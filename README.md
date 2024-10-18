@@ -1,5 +1,5 @@
 # GEOG-678-FALL24
-| Homework |Labs      |Project    |
+| Homework |Labs        |Project      |
 |:--------:|:--------:|:---------:|
 |[Week01](homework/Week01/README.md)|[Week01](Lab/Week01/README.md)|            |
 |[Week02](homework/Week02/README.md)|[Week02](Lab/Week02/README.md)|            |
