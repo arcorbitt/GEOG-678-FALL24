@@ -8,3 +8,4 @@
 |[Week05](Homework/Week05/README.md)|[Week05](Lab/Week05/README.md)|            |
 |[Week06](Homework/Week06/README.md)|[Week06](Lab/Week06/README.md)|            |
 |[Week07](Homework/Week07/README.md)|[Week07](Lab/Week07/README.md)|            |
+|[Week08](Homework/Week08/README.md)|[Week08](Lab/Week08/README.md)|            |
