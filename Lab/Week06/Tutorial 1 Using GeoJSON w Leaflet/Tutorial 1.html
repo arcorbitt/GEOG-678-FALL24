@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Using GeoJSON with Leaflet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <style>
+        #map {
+            width: 100%;
+            height: 800px;
+        }
+    </style>
+</head>
+<body>
+	<h1>Using GeoJSON with Leaflet</h1>
+    <div id="map"></div>
+	//updated java and css links
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Initialize the map and set its view
+        var map = L.map('map').setView([40, -105], 5); // Centered in the middle of the U.S.
+
+        // Add a tile layer (OpenStreetMap tiles)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+ 
+	function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
+}
+
+	var someFeatures = [{
+    "type": "Feature",
+    "properties": {
+        "name": "Coors Field",
+        "show_on_map": true
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.99404, 39.75621]
+    }
+}, {
+    "type": "Feature",
+    "properties": {
+        "name": "Busch Field",
+        "show_on_map": false
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.98404, 39.74621]
+    }
+}];
+
+L.geoJSON(someFeatures, {
+    filter: function(feature, layer) {
+        return feature.properties.show_on_map;
+    }
+}).addTo(map);
+    </script>
+</body>
+</html>
+

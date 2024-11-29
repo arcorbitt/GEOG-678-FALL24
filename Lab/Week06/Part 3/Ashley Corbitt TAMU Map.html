@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang='eng'>
+
+<head>
+	<title>Ashley Corbitt TAMU Map</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	<style>
+		#map {
+			height: 600px;
+			width: 100%;
+			}
+	</style>
+</head>
+
+<body>
+		
+	<h1>Ashley Corbitt TAMU Map</h1>
+	
+	<div id='map'></div>
+	
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+		crossorigin=""></script>
+	
+	<script src='tamubuildings.js'></script>
+	
+	<script>
+		var map = L.map('map').setView([30.615963, -96.341842], 16);
+		
+		L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+		
+		function highlightFeature(e) {
+			var layer = e.target;
+			layer.setStyle({
+				weight: 3,
+				color: 'yellow',
+				fillOpacity: 0.9
+			});
+		info.update(layer.feature.properties);
+		}
+		
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			
+		info.update();
+		}
+		
+		function zoomToFeature(e) {
+			map.fitBounds(e.target.getBounds());
+		}
+		
+		function onEachFeature(feature, layer) {
+			layer.on({
+				mouseover: highlightFeature,
+				mouseout: resetHighlight,
+				click: zoomToFeature
+			});
+			layer.bindPopup(
+				`<b>${feature.properties.BldgName}</b><br>Building Number: ${feature.properties.Number}`
+				);
+		}
+		
+		const geojson = L.geoJson(tamu, {
+			style: function() {
+				return {
+					color: '#500000',
+					weight: 1,
+					fillOpacity: 0.7
+				};
+			},
+			onEachFeature: onEachFeature
+		}).addTo(map);
+
+	</script>
+	
+	<script>
+	
+		var info = L.control();
+
+		info.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+			this.update();
+		return this._div;
+		};
+
+		info.update = function (props) {
+        this._div.innerHTML = '<h4>Building Information</h4>' + 
+            (props
+                ? `<b>${props.BldgName}</b><br />Abbreviation: ${props.BldgAbbr || 'N/A'}`
+                : 'Hover over a building');
+		};
+
+		info.addTo(map);	
+	
+	</script>
+	
+	<style>
+	
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.info h4 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+	
+	</style>
+</body>
+</html>
