@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>College Station Weekly Temperature Forecast</title>
+
+</head>
+<body>
+
+	<h1>College Station Weekly Temperature Forecast</h1>
+	
+<div id="container"></div>
+	<script type="module">
+
+	import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+	//weather data from lab 8
+		const weatherData = [
+			{ day: 'Satuday', high: 82, low: 67 },
+			{ day: 'Sunday', high: 81, low: 59 },
+			{ day: 'Monday', high: 81, low: 50 },
+			{ day: 'Tuesday', high: 70, low: 47 },
+			{ day: 'Wednesday', high: 77, low: 51 },
+			{ day: 'Thursday', high: 78, low: 60 },
+			{ day: 'Friday', high: 79, low: 66 },
+			{ day: 'Saturday', high: 80, low: 66 },
+			];
+
+		const width = 640;
+		const height = 400;
+		const marginTop = 20;
+		const marginRight = 20;
+		const marginBottom = 80;//extended margin for legend
+		const marginLeft = 50; //adjusted for large label
+
+		const svg = d3.create("svg")
+			.attr("width", width)
+			.attr("height", height);
+
+		//X axis with the days not the dates, from data
+        const x = d3.scaleBand()
+            .domain(weatherData.map(d => d.day)) // Use the days from the data.
+            .range([marginLeft, width - marginRight])
+            .padding(0.1);
+
+		const y = d3.scaleLinear()
+			.domain([0, 100]) // Adjust based on your data.
+			.range([height - marginBottom, marginTop]);
+
+		const xAxis = d3.axisBottom(x);
+
+
+		svg.append('g')
+			.attr('transform', `translate(0,${height - marginBottom})`) // Position at the bottom.
+			.call(xAxis);
+			
+		svg.append("text")
+			.attr("class", "x-axis-label")
+			.attr("text-anchor", "middle")
+			.attr("x", width / 2) // Center the label along the x-axis.
+			.attr("y", height - marginBottom + 40) // Position below the x-axis.
+			.text("Days of the Week") // Set the label text.
+			.style("font-size", "24px") // Adjust font size.
+			.style("fill", "black"); // Set the text color.
+
+		svg.append("g")
+			.attr("transform", `translate(0,${height - marginBottom})`)
+			.call(d3.axisBottom(x));
+
+		svg.append("g")
+			.attr("transform", `translate(${marginLeft},0)`)
+			.call(d3.axisLeft(y));
+			
+		svg.append("text")
+			.attr("class", "y-axis-label")
+			.attr("text-anchor", "middle")
+			.attr("transform", `rotate(-90)`) // Rotate the text to align vertically.
+			.attr("x", -(height / 2)) // Center the label along the y-axis.
+			.attr("y", marginLeft - 30) // Position it slightly outside the y-axis.
+			.text("Temperature (°F)") // Set the label text.
+			.style("font-size", "24px") // Adjust font size.
+			.style("fill", "black"); // Set the text color.
+
+		container.append(svg.node());
+
+	//adding the tempurature high bar
+		svg.selectAll(".bar-high")
+            .data(weatherData)
+            .enter().append("rect")
+            .attr("class", "bar-high")
+            .attr("x", d => x(d.day))
+            .attr("y", d => y(d.high))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - marginBottom - y(d.high))
+            .attr("fill", "silver");
+			
+	//adding some temp labels for each bar
+		svg.selectAll('.label-high')
+			.data(weatherData)
+			.enter().append('text')
+			.attr('class', 'label-high')
+			.attr('x', d=> x(d.day) + x.bandwidth() /2)
+			.attr('y', d=> y(d.high) - 5)
+			.attr('text-anchor', 'middle')
+			.text(d => `${d.high}°F`)
+			.attr('fill', 'black')
+			.style('font-size', '12px');
+			
+	//adding the temperature low bar
+		svg.selectAll(".bar-low")
+            .data(weatherData)
+            .enter().append("rect")
+            .attr("class", "bar-low")
+            .attr("x", d => x(d.day) + x.bandwidth() / 4) // Offset for low bars.
+            .attr("y", d => y(d.low))
+            .attr("width", x.bandwidth() / 2) // Narrower bars for lows.
+            .attr("height", d => height - marginBottom - y(d.low))
+            .attr("fill", "#500000");
+
+	//adding some temp labels for each bar
+		svg.selectAll(".label-low")
+            .data(weatherData)
+            .enter().append("text")
+            .attr("class", "label-low")
+            .attr("x", d => x(d.day) + (x.bandwidth() / 4) + (x.bandwidth() / 4)) // Center over the low bar.
+            .attr("y", d => y(d.low) - 5) // Position above the bar.
+            .attr("text-anchor", "middle") // Center align the text.
+            .text(d => `${d.low}°F`)//added the degree and F
+            .attr("fill", "black")
+            .style("font-size", "12px");
+			
+	//adding a legend
+		const legend = svg.append("g")
+			.attr("class", "legend")
+			.attr("transform", `translate(${width / 2 - 100}, ${height - marginBottom + 50})`); // Center the legend horizontally and position it below the x-axis
+
+		legend.append("rect")
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", 20)
+			.attr("height", 20)
+			.attr("fill", "silver"); // Color for highs
+
+		legend.append("text")
+			.attr("x", 30) // Position text to the right of the rectangle
+			.attr("y", 15) // Center-align with the rectangle
+			.text("High Forecast")
+			.style("font-size", "12px")
+			.attr("alignment-baseline", "middle");
+
+		legend.append("rect")
+			.attr("x", 100) // Position the rectangle to the right of the first entry
+			.attr("y", 0)
+			.attr("width", 20)
+			.attr("height", 20)
+			.attr("fill", "#500000"); // Color for lows
+
+		legend.append("text")
+			.attr("x", 130) // Position text to the right of the rectangle
+			.attr("y", 15) // Center-align with the rectangle
+			.text("Low Forecast")
+			.style("font-size", "12px")
+			.attr("alignment-baseline", "middle");
+
+	</script>
+
+</body>
+
+</html>
